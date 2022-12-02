@@ -3,65 +3,90 @@ import time
 
 class Node:
     def __init__(self, key, next):
-        self.key = key
-        self.next = next
+        self.key = key          # data value of the key
+        self.next = next        # address to the next node
 
 class HashTable:
     def __init__(self, M):
-        self.M = M             
-        self.T = [None] * M    
+        self.M = M              # size of the table
+        self.T = [None] * M     # the table 
 
     # Method for inserting a key value to the hash table
     def insert(self, value) -> None:
+
+        # Getting the index with the hash function
         i = self.hash(value)
 
-        if self.T[i]:
+        # if there exists a node already in the table, start from the first one
+        if self.T[i]: 
             node = self.T[i]
-
             while True:
-                if node.key == None:
+
+                # empty space -> insert key
+                if node.key == None: 
                     node.key = value
                     break
-                elif node.next == None:
+
+                # dublicate is found -> break the loop without inserting the key
+                elif node.key == value: 
+                    break
+
+                # next node is not defined -> insert a new node with key value
+                elif node.next == None: 
                     node.next = Node(value, None)
                     break
+
+                # iterate to the next node in the linked list
                 else:
                     node = node.next 
+        
+        # if there is no node in the hash table at the given index, create one with the key value
         else:
-            self.T[i] = Node(value, None)
+            self.T[i] = Node(value, None) 
 
-        return 
+        return
 
     # Method for searching whether the given key value exists in the hash table
     def search(self, value) -> bool:
-        i = self.hash(value)
-        inTable = False
 
+        # Getting the index with the hash function
+        i = self.hash(value)
+
+        # Only proceed if there is a start node at the given index
         if self.T[i]:
+            # Start from the first node
             node = self.T[i]
             while True:
                 if node.key == value:
-                    inTable = True
-                    break
-                elif node.key == None:
-                    break
-                elif node.next == None:
+                    # in case the key was found, return True
+                    return True
+                    
+                # Break the loop if we reach the end of the linked list
+                elif node.key == None or node.next == None:
                     break
                 else:
                     node = node.next
 
-        return inTable
+        # in case the value was not found, return False
+        return False 
 
     # Method for removing a key value from hash table
     def delete(self, value) -> None:
+
+        # Getting the index with the hash function
         i = self.hash(value)
+
+        # Only start the search if there is a node located at the given index
         if self.T[i]:
             node = self.T[i]
+
+            # The first comparison happens outside the loop
             if node.key == value:
                 self.T[i] = node.next
                 return
 
-            while True:
+            # Other comparisons happen in the loop, if the key is found then the path to the node (in the previous node) is replaced
+            while True: 
                 if not node.next:
                     break
 
@@ -90,18 +115,19 @@ class HashTable:
 
     # Method for presenting the hash table
     def print(self) -> None:
+        print("Index\tNodes")
         for i in range(0, self.M):
             node = self.T[i]
+            print(f"{i}\t", end="")
             while True:
                 if node:
                     print(node.key, end=" ")
                     if node.next:
                         node = node.next
-                    else: 
-                        break
-                else:
-                    break
+                        continue
+                break
             print()
+        return
 
     def analyse(self) -> None:
         lengths = []
@@ -127,11 +153,12 @@ class HashTable:
             help_sum += (length-mean)**2
         std = sqrt(help_sum/nodes)
 
-        print(f"\nAnalysis for data distribution ( M = {self.M} ):\n")
+        print("\n","*" *30)
+        print(f"Analysis for data distribution ( M = {self.M} ):\n")
         print("Analysing the lengths of the linked lists inside the hash table")
-        print(f"Mean: {mean}")
-        print(f"Standard deviation: {std}\n")
-        print(f"Empty nodes: {empty}\n")
+        print(f"\tMean: {mean:.4f}")
+        print(f"\tStandard deviation: {std:.4f}")
+        print(f"\nEmpty slots in the table: {empty}\n")
         return
 
 
@@ -139,46 +166,41 @@ if __name__ == "__main__":
 
     time_start = time.time()
 
-    nodes = 0
-    overflow_keys = 0
-
+    # Creating the table
     table = HashTable(10000)
-
     time_table = time.time() - time_start
-    print(f"Time spent making the table: {time_table}")
+    print(f"Time spent making the table: {time_table:.4f}s")
 
-    overflow = 0
 
-    eng_words = open('words_alpha.txt', 'r')
-    while True:
-        line = eng_words.readline()
-        if len(line) < 1:
-            break
-        else:
-            v = table.insert(line.rstrip('\n'))
-            if v:
-                overflow += 1
+    # Storing the English words to the table
+    english_words_file = open('words_alpha.txt', 'r')
+    english_words = english_words_file.readlines()
+    english_words_file.close()
 
-    eng_words.close()
+    for word in english_words:
+        table.insert(word.rstrip('\n'))
 
     time_insert = time.time() - time_table - time_start
-    print(f"Time spent inserting: {time_insert}")
+    print(f"Time spent inserting: {time_insert:.4f}s")
 
-    common = 0
 
-    fin_words = open('kaikkisanat.txt', 'r', encoding="utf-8")
-    while True:
-        line = fin_words.readline()
-        if len(line) < 1:
-            break
-        else:
-            if table.search(line.rstrip('\n')):
-                common += 1
-    fin_words.close()
+    # Finding the common words from the list of Finnish words
+    finnish_words_file = open('kaikkisanat.txt', 'r', encoding="utf-8")
+    finnish_words = finnish_words_file.readlines()
+    finnish_words_file.close()
+    
+    common_words = 0
+    for word in finnish_words:
+        if table.search(word.rstrip('\n')):
+                common_words += 1
 
     time_search = time.time() - time_insert - time_table - time_start
-    print(f"Time spent searching: {time_search}")
+    print(f"Time spent searching: {time_search:.4f}s")
 
-    print(f"Common words: {common}")
 
+    # Printing the answer (common words)
+    print(f"\nCOMMON WORDS: {common_words}")
+
+
+    # Analysis of the table structure
     table.analyse()
