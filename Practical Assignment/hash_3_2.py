@@ -7,7 +7,7 @@ if __name__ == "__main__":
     # Creating the list
     word_list = []
     time_table = time.time() - time_start
-    print(f"Time spent making the table: {time_table}")
+    print(f"Time spent making the table: {time_table}s")
 
 
     # Storing the English words to the list
@@ -19,7 +19,7 @@ if __name__ == "__main__":
         word_list.append(word.rstrip('\n'))
 
     time_insert = time.time() - time_table - time_start
-    print(f"Time spent inserting: {time_insert:.4f}")
+    print(f"Time spent inserting: {time_insert:.4f}s")
 
 
     # Finding the common words from the list of Finnish words
@@ -33,8 +33,8 @@ if __name__ == "__main__":
                 common_words += 1
 
     time_search = time.time() - time_insert - time_table - time_start
-    print(f"Time spent searching: {time_search:.4f}")
+    print(f"Time spent searching: {time_search:.4f}s")
 
 
     # Printing the answer
-    print(f"COMMON WORDS: {common_words}")
+    print(f"\nCOMMON WORDS: {common_words}")

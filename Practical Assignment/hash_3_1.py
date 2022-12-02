@@ -85,7 +85,8 @@ class HashTable:
                 self.T[i] = node.next
                 return
 
-            # Other comparisons happen in the loop, if the key is found then the path to the node (in the previous node) is replaced
+            # Other comparisons happen in the loop, if the key is found then the path to the 
+            # node (in the previous node) is replaced
             while True: 
                 if not node.next:
                     break
@@ -129,9 +130,12 @@ class HashTable:
             print()
         return
 
+    # Method for analysing the data distribution in the table
     def analyse(self) -> None:
         lengths = []
         empty = 0
+
+        # Looping through each index value in the table and calculating the amount of nodes
         for node in self.T:
             length = 0
             while True:
@@ -147,6 +151,7 @@ class HashTable:
         sum_of_lengths = sum(lengths)
         nodes = len(lengths)
 
+        # Calculating mean of lengths and standard deviation
         mean = sum_of_lengths/nodes
         help_sum = 0
         for length in lengths:
@@ -159,6 +164,7 @@ class HashTable:
         print(f"\tMean: {mean:.4f}")
         print(f"\tStandard deviation: {std:.4f}")
         print(f"\nEmpty slots in the table: {empty}\n")
+
         return
 
 
@@ -167,7 +173,7 @@ if __name__ == "__main__":
     time_start = time.time()
 
     # Creating the table
-    table = HashTable(10000)
+    table = HashTable(100000)
     time_table = time.time() - time_start
     print(f"Time spent making the table: {time_table:.4f}s")
 
