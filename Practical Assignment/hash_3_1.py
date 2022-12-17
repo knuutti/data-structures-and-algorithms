@@ -173,7 +173,7 @@ if __name__ == "__main__":
     time_start = time.time()
 
     # Creating the table
-    table = HashTable(100000)
+    table = HashTable(10000)
     time_table = time.time() - time_start
     print(f"Time spent making the table: {time_table:.4f}s")
 
